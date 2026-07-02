@@ -1,0 +1,15 @@
+# Files to include in the source distribution (sdist).
+include LICENSE
+include README.md
+include requirements.txt
+include setup.py
+
+# Bundle the reference data loaded at runtime via importlib.resources.
+recursive-include xqaa/data *.npz *.csv
+recursive-include xqaa/tests/files *.csv
+
+# Keep build/cache cruft out of the distribution.
+global-exclude *.py[cod]
+global-exclude __pycache__
+prune nb
+prune papers

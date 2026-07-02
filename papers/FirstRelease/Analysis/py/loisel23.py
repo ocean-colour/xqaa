@@ -60,7 +60,7 @@ def stats(dataset:str='loisel23', extras:dict={'X':1, 'Y':0},
         G1, G2 = inversion.calc_Gcoeff(l23_wave, xqaaParams)
         D = inversion.quadratic(rrs, G1, G2)
 
-        bbnw = inversion.retrieve_bbnw(aw, bbw, D)
+        bbnw = inversion.retrieve_bbp(aw, bbw, D)
         if bbnw_corr == 'mean':
             corr_bbnw = np.nanmean(bbnw[avgbb_wvs])
         elif 'pow' in bbnw_corr: 
@@ -74,8 +74,8 @@ def stats(dataset:str='loisel23', extras:dict={'X':1, 'Y':0},
 
         #embed(header='47 of loisel23.py: stats()')
         # anw
-        anw = inversion.retrieve_anw(aw, bbw, D, 
-                                     corr_bbnw=corr_bbnw)
+        anw = inversion.retrieve_anw(aw, bbw, D,
+                                     corr_bbp=corr_bbnw)
 
         # Stats
         roff_a.append( np.nanmedian(((anw - anw_true)/anw_true)[a_wvs]))

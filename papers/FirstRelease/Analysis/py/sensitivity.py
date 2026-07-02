@@ -51,7 +51,7 @@ def sensitivity_to_G1(dataset:str='loisel23',
     for dG1 in dG1s:
         G1 = rt.G1 + dG1
         D = inversion.quadratic(rrs, G1, rt.G2)
-        bbnw = inversion.retrieve_bbnw(aw, bbw, D)
+        bbnw = inversion.retrieve_bbp(aw, bbw, D)
 
         # Difference
         diff = bbnw - bbnw_true
@@ -78,7 +78,7 @@ def sensitivity_to_G2(dataset:str='loisel23',
     for dG2 in dG2s:
         G2 = rt.G2*dG2
         D = inversion.quadratic(rrs, rt.G1, G2)
-        bbnw = inversion.retrieve_bbnw(aw, bbw, D)
+        bbnw = inversion.retrieve_bbp(aw, bbw, D)
 
         # Difference
         diff = bbnw - bbnw_true
