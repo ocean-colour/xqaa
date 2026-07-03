@@ -18,8 +18,6 @@ from xqaa import params as xqaa_params
 #sys.path.append(os.path.abspath("../Analysis/py"))
 #import anly_utils
 
-from IPython import embed
-
 def gen_cb(img, lbl, csz = 17.):
     cbaxes = plt.colorbar(img, pad=0., fraction=0.030)
     cbaxes.set_label(lbl, fontsize=csz)

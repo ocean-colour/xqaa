@@ -7,11 +7,9 @@ from matplotlib import pyplot as plt
 from ocpy.hydrolight import loisel23
 from ocpy.utils import plotting
 
-from xqaa import geometric as xiop_geom
+from xqaa import geometric as xqaa_geom
 from xqaa import inversion
 from xqaa import params as xqaa_params
-
-from IPython import embed
 
 def stats(dataset:str='loisel23', extras:dict={'X':1, 'Y':0}, 
           bbp_corr:str='none'):
@@ -54,7 +52,7 @@ def stats(dataset:str='loisel23', extras:dict={'X':1, 'Y':0},
         anw_true = l23_anw[idx]
 
         # rrs
-        rrs = xiop_geom.rrs_from_Rrs(Rrs)
+        rrs = xqaa_geom.rrs_from_Rrs(Rrs)
 
         # Coefficients
         G1, G2 = inversion.calc_Gcoeff(l23_wave, xqaaParams)

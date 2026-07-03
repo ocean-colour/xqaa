@@ -154,11 +154,11 @@ def spline_me(params: xqaa_params.XQAAParams):
     bspline_G1 = make_interp_spline(wave, G1)
     bspline_G2 = make_interp_spline(wave, G2)
 
-    # Save the B-spline representations
+    # Save the B-spline representations (knots t, coefficients c, degree k)
     outfile = qio.bspline_filename(params)
     np.savez(outfile,
-             t_H1=bspline_G1.t, c_H1=bspline_G1.c, k_H1=bspline_G1.k,
-             t_H2=bspline_G2.t, c_H2=bspline_G2.c, k_H2=bspline_G2.k)
+             t_G1=bspline_G1.t, c_G1=bspline_G1.c, k_G1=bspline_G1.k,
+             t_G2=bspline_G2.t, c_G2=bspline_G2.c, k_G2=bspline_G2.k)
     print(f'Saved to {outfile}')
 
 

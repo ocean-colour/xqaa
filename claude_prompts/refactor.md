@@ -36,6 +36,12 @@ If you need to run Python code, please use the `ocean14` conda environment.
 
 4. I jumped the gun and had you refactor before answering all of your questions.  I have now answered 8-15.  Please read those and make another pass at the refactor.  If you have more questions, add them to the Q&A. Log your work.
 
+5. I have answered your new questions.  Please read them and make any additional modifications you need to make.  Log your work.
+
+### Docs
+
+1. Now, let's work on docs.  I want a set of documentation files to describe the code base and its usage.  These will appear on Read the Docs.  Please create a `docs/` folder and create the necessary files to get Read the Docs to work.  I will do my part on the RTD website.  If you have any questions, ask me in the Q&A section, in a Docs sub-section.  Log your work.
+
 ## Reports
 
 ### Initial Assessment
@@ -253,14 +259,14 @@ notebooks moved to `nb/archive/`, etc.)*
     Lee-2002/QAA values **G1 = 0.0895, G2 = 0.1247** (they appear in `QAA_Lee2002.ipynb`;
     `bing.rt` uses internal `G1_STANDARD`/`G2_STANDARD` I couldn't fully resolve). Are these
     the intended constants, or should they match `bing.rt`'s standards exactly?
-    >A.
+    >A. Yes, those are right.
 
 17. **Keep the B-spline path?** I made fixed coefficients the default but kept the
     wavelength-dependent path available via `XQAAParams(coeff_source='bspline')` (so
     `derive.py`, the `qssa_*.npz` files, and `load_qssa_bspline` all stay useful for when
     you revisit λ-dependent G1/G2). Do you want that path kept as an option, or removed
     entirely for now?
-    >A.
+    >A. Keep the B-spline path.
 
 ## Logging
 
@@ -411,3 +417,30 @@ Verified: full suite passes in `ocean14` (10 passed); `pyproject.toml` parses wi
 
 Added two follow-up questions to the Q&A (16: confirm the fixed G1/G2 values; 17: keep vs
 remove the B-spline coefficient path).
+
+### 2026-07-03 (Refactor prompt 5 — answers 16–17 + final polish)
+
+The author confirmed both follow-ups: 16 — the fixed constants `G1=0.0895, G2=0.1247` are
+correct; 17 — keep the B-spline path. Both match what the second pass already implemented, so
+no design changes were needed. Ran a Fable subagent as an independent final audit against
+every Q&A decision (params/inversion/retrieve/derive/geometric, packaging, notebooks, papers,
+a leftover-name grep, and the test suite): all 10 checks PASS, 10 tests pass. The audit
+surfaced four minor cosmetic leftovers, which I then cleaned up:
+
+1. **Finished the Hansen→Gordon rename in the data layer.** The bspline `.npz` archives still
+   used `t_H1/c_H1/k_H1/t_H2/...` keys. Renamed them to `t_G1/c_G1/k_G1/t_G2/...` in
+   `qssa/io.py` (read) and `qssa/derive.py` (write), then regenerated both shipped files
+   (`qssa_bspline_loisel23_X1Y0.npz`, `_X4Y0.npz`) via `spline_me` in `ocean14` — the fit
+   values are unchanged; only the archive keys changed. (The `fits_*.npz` files use
+   `ans/cov/wave/rms` and needed no change.)
+2. **papers/loisel23.py** — renamed the stale import alias `geometric as xiop_geom` →
+   `xqaa_geom` (and its one use).
+3. **papers** — removed the dead `from IPython import embed` imports in `loisel23.py` and
+   `figs_xqaa_first.py` (no `embed()` calls remained).
+4. **nb/XQAA_demo.ipynb** — renamed the local `bbnw_true` → `bbp_true` (the ocpy attribute
+   `l23_ds.bbnw` is preserved), and re-executed the notebook.
+
+Verified: full suite passes in `ocean14` (10 passed — the regenerated `G1/G2`-keyed data files
+load correctly through `io.py`); all three `papers/` scripts `py_compile`; and a repo-wide grep
+finds no remaining `_H1/_H2` keys or `xiop_geom`. The refactor is complete and matches all
+answered questions (1–17).
