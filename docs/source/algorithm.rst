@@ -90,3 +90,8 @@ The pure-water absorption :math:`a_w` comes from
 (``ocpy.water.absorption``). The pure-water backscatter :math:`b_{b,w}` is
 currently a **stopgap**, interpolated from the selected Loisel+2023 variant;
 replacing it with a proper pure-water backscatter model is future work.
+
+.. seealso::
+
+   :doc:`background` for the full step-by-step derivation (also maintained
+   `on Overleaf <https://www.overleaf.com/read/nsspxdvmqkmv#fc6f64>`_).

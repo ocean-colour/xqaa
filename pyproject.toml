@@ -13,7 +13,7 @@ license = { text = "BSD-3-Clause" }
 authors = [
     { name = "J. Xavier Prochaska", email = "jxp@ucsc.edu" },
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "numpy",
     "scipy",

@@ -9,6 +9,7 @@
 
 sphinx>=7.0
 sphinx-rtd-theme>=2.0
+myst-nb                  # render the demo notebook
 numpy
 scipy
 pandas

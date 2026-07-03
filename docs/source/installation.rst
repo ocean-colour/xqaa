@@ -2,7 +2,7 @@
 Installation
 ============
 
-XQAA targets **Python ≥ 3.10** and is developed in the ``ocean14`` conda
+XQAA targets **Python ≥ 3.12** and is developed in the ``ocean14`` conda
 environment.
 
 From source

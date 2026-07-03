@@ -38,7 +38,14 @@ Contents
    installation
    usage
    algorithm
+   background
    api/index
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Examples
+
+   nb/XQAA_demo
 
 Indices and tables
 -------------------

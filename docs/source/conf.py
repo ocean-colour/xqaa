@@ -33,11 +33,29 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
+    # myst-nb bundles myst-parser (Markdown) and adds notebook (.ipynb)
+    # support; load it INSTEAD of myst_parser (loading both conflicts).
+    'myst_nb',
 ]
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 master_doc = 'index'
+
+# Treat .rst, .md, and .ipynb as sources (.ipynb via myst-nb).
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'myst-nb',
+    '.ipynb': 'myst-nb',
+}
+
+# Do NOT execute notebooks at build time -- render the stored outputs.
+# The demo notebook imports ocpy, which is absent on the RTD runner.
+nb_execution_mode = 'off'
+
+# The notebook is authored as a standalone GitHub document; its Markdown
+# links are not Sphinx cross-reference targets, so don't fail the build.
+suppress_warnings = ['myst.xref_missing']
 
 # -- Autodoc / autosummary ---------------------------------------------------
 
