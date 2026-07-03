@@ -50,9 +50,21 @@ def test_retrieve_bbp_and_anw():
     assert np.allclose(anw_c, D*bbw - aw + corr*D)
 
 
-def test_calc_Gcoeff_shapes():
-    """ calc_Gcoeff evaluates the packaged B-splines (no ocpy needed). """
+def test_calc_Gcoeff_fixed():
+    """ Default coeff_source='fixed' returns the constant Gordon coefficients. """
     xparams = xqaa_params.XQAAParams()
+    wave = np.linspace(450., 650., 20)
+
+    G1, G2 = inversion.calc_Gcoeff(wave, xparams)
+    assert G1.shape == wave.shape
+    assert G2.shape == wave.shape
+    assert np.allclose(G1, xparams.G1)
+    assert np.allclose(G2, xparams.G2)
+
+
+def test_calc_Gcoeff_bspline():
+    """ coeff_source='bspline' evaluates the packaged B-splines (no ocpy needed). """
+    xparams = xqaa_params.XQAAParams(coeff_source='bspline')
     wave = np.linspace(450., 650., 20)
 
     G1, G2 = inversion.calc_Gcoeff(wave, xparams)

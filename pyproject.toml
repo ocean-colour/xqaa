@@ -25,6 +25,8 @@ dependencies = [
 
 [project.optional-dependencies]
 test = ["pytest"]
+# bing is only needed by the papers/ analysis scripts, not the package itself
+papers = ["bing @ git+https://github.com/ocean-colour/bing.git"]
 
 [project.urls]
 Homepage = "https://github.com/ocean-colour/xqaa"

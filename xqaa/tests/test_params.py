@@ -7,9 +7,13 @@ def test_default_params():
     xqaaParams = xqaa_params.XQAAParams()
 
     assert xqaaParams.dataset == 'loisel23'
-    assert xqaaParams.L23_X == 4
+    assert xqaaParams.L23_X == 1
     assert xqaaParams.L23_Y == 0
     assert xqaaParams.bbp_corr == 'pow'
+    # Fixed Gordon coefficients are the default coefficient source
+    assert xqaaParams.coeff_source == 'fixed'
+    assert xqaaParams.G1 == 0.0895
+    assert xqaaParams.G2 == 0.1247
 
 
 def test_chk_options():

@@ -1,6 +1,6 @@
 """ Algorithms related to the QSSA inversion.
 
-The XQAA inversion rests on the QSSA (Hansen/Gordon) reflectance model
+The XQAA inversion rests on the QSSA (Gordon) reflectance model
 
     rrs = G1*u + G2*u**2 ,   with   u = bb / (a + bb)
 
@@ -23,24 +23,31 @@ def calc_Gcoeff(wave: np.ndarray, xparams: xqaa_params.XQAAParams):
     """
     Evaluate the QSSA G1 and G2 coefficients at the requested wavelengths.
 
-    The coefficients are stored as pre-fit B-splines (one per coefficient)
-    that were derived offline from the reference dataset selected in
-    ``xparams`` (see ``xqaa.qssa.derive``).
+    By default (``xparams.coeff_source == 'fixed'``) the fixed Gordon
+    constants ``xparams.G1``/``xparams.G2`` are used at every wavelength.
+    Setting ``coeff_source == 'bspline'`` instead evaluates the
+    wavelength-dependent B-splines fit offline from the reference dataset
+    (see ``xqaa.qssa.derive``).
 
     Parameters:
         wave (np.ndarray): Wavelengths at which to evaluate the coefficients [nm].
         xparams (XQAAParams): The parameters for the XQAA model; selects the
-            dataset / variant whose B-spline coefficients are loaded.
+            coefficient source and, for B-splines, the dataset / variant.
 
     Returns:
         tuple: ``(G1, G2)`` arrays, each with the same shape as ``wave``.
     """
-    # Load the B-splines for the two QSSA coefficients
-    bspline_G1, bspline_G2 = load_qssa_bspline(xparams)
-
-    # Evaluate the coefficients at the requested wavelengths
-    G1 = bspline_G1(wave)
-    G2 = bspline_G2(wave)
+    if xparams.coeff_source == 'fixed':
+        # Fixed Gordon coefficients, broadcast across all wavelengths
+        G1 = np.full(np.shape(wave), xparams.G1, dtype=float)
+        G2 = np.full(np.shape(wave), xparams.G2, dtype=float)
+    elif xparams.coeff_source == 'bspline':
+        # Wavelength-dependent coefficients from the pre-fit B-splines
+        bspline_G1, bspline_G2 = load_qssa_bspline(xparams)
+        G1 = bspline_G1(wave)
+        G2 = bspline_G2(wave)
+    else:
+        raise ValueError(f"Bad coeff_source: {xparams.coeff_source}")
 
     return G1, G2
 

@@ -34,6 +34,8 @@ If you need to run Python code, please use the `ocean14` conda environment.
 
 3. Ok, please proceed to perform the refactor.  If any questions arise, ask me in the Q&A section.  Log your work.
 
+4. I jumped the gun and had you refactor before answering all of your questions.  I have now answered 8-15.  Please read those and make another pass at the refactor.  If you have more questions, add them to the Q&A. Log your work.
+
 ## Reports
 
 ### Initial Assessment
@@ -166,7 +168,7 @@ Cross-checked the answers against the code (and verified in the `ocean14` env, w
    again against xqaa, or just **quarantined** as clearly-marked offline tooling (imports
    fixed, `IPython.embed()` and the `nomb`/`nobm` NOBM path removed, but not guaranteed to
    re-run)? Note `xqaa/data/` ships only Loisel23 — no NOBM data — so the NOBM branch is dead.
-   >A.
+   >A. Please repair derive.py.  However, for the time being we will use fixed Gordon coefficients, not wavelength dependent ones.  While you are at it, pu the name back to Gordon and not Hansen.
 
 9. **Scope of the `bbnw → bbp` rename.** Just the `iops_from_Rrs` return, or the whole
    surface — `inversion.retrieve_bbnw → retrieve_bbp`, the `corr_bbnw`/`avg_bbnw` values,
@@ -174,17 +176,17 @@ Cross-checked the answers against the code (and verified in the `ocean14` env, w
    asymmetry — physically fine, since non-water absorption includes CDOM)? The
    `papers/FirstRelease/Analysis/py/{loisel23,sensitivity}.py` scripts call
    `retrieve_bbnw` directly — update them too, or are `papers/` frozen?
-   >A.
+   >A. Update bbnw -> bbp everywhere you can.
 
 10. **New return shape.** A 4-tuple `(anw, bbp, corr_bbnw, avg_bbnw)`, or a small dataclass
     / dict (e.g. `XQAARetrieval(anw, bbp, corr_bbnw, avg_bbnw)`)? Should `corr_bbnw`/
     `avg_bbnw` stay in the return at all, or become internal?
-    >A.
+    >A. Return a dictionary with the keys anw, bbp, corr_bbp, avg_bbp.
 
 11. **Default `L23_X`.** To reconcile answers 4 (honor xparams) and 7 (use X=4), should I
     change `XQAAParams.L23_X` default from `1` to `4`? That changes retrieval numbers. And
     should the now-noncanonical `_X1Y0` `.npz` files be kept or removed?
-    >A.
+    >A. I am going to go back on my answer 7 and use X=1 for now.  We will need to implement inelastic processes to adopt X=4.  Let's make sure the docs reflect this (when we make them).
 
 12. **Tests / golden values.** Heads-up: `test_retrieve.py` **currently fails** in `ocean14`
     (asserts `bbnw[-1]==0.000549`, code gives `0.0006487`) — and it mislabels the returned
@@ -193,23 +195,23 @@ Cross-checked the answers against the code (and verified in the `ocean14` env, w
     regenerate goldens against? And may I add small shipped `aw`/`bbw` fixtures so the unit
     tests run **without `ocpy`**, or must tests depend on `ocpy`? Is `ocean14` the canonical
     dev/test env?
-    >A.
+    >A. It should be ok now that I am going back to X=1.
 
 13. **`pyproject.toml` deps + CI.** Should the new `pyproject.toml` declare only `ocpy`
     (git/direct, not on PyPI) and **drop the dead `xiop`** and `bing` (bing is used only by a
     `papers/` script)? Reconcile or delete the `requirements.txt` added on 2026-07-01?
     Also `.github/workflows/ci_tests.yml` is stale — it targets `frb`, the `master` branch,
     `python setup.py test`, and `pycodestyle frb`. Update it as part of the packaging pass?
-    >A.
+    >A. Grab `ocpy` with git; I will put it on PyPI soon.  Drop `xiop` but keep `bing`.  Update `ci_tests.yml` to target `xqaa` and `main`.
 
 14. **Behavior-preserving constraint.** Is exact numeric output the hard constraint, or may I
     make `inversion.quadratic` **NaN-mask** a single negative-`u` pixel instead of raising and
     killing the whole-array retrieval (a robustness cleanup, arguably not "finishing")?
-    >A.
+    >A. Exact numeric output is the hard constraint.
 
 15. **Notebooks — move or in place?** Move all five stale notebooks to `nb/archive/` and put
     the new clean `iops_from_Rrs` demo at `nb/`, or leave them where they are and just add the demo?
-    >A.
+    >A. Yes, that is good.
 
 #### Defaults Claude proceeded with (prompt 3 — no answers to 8–15 yet)
 
@@ -240,6 +242,25 @@ defaults. Please correct any and I'll adjust:
   switch to NaN-masking). Only intended numeric change is the X=4 default (Q11).
 - **15 (notebooks):** Left the five stale notebooks in place; added a clean, executed
   `nb/XQAA_demo.ipynb` demonstrating `iops_from_Rrs`.
+
+*(2026-07-03: the above prompt-3 defaults were revised in the second pass below to match
+your answers to 8–15 — X reverted to 1, dataclass → dict, fixed Gordon coefficients,
+notebooks moved to `nb/archive/`, etc.)*
+
+#### Second-pass follow-up questions (2026-07-03, Claude — after answers 8–15)
+
+16. **Fixed Gordon coefficient values.** For `coeff_source='fixed'` I used the canonical
+    Lee-2002/QAA values **G1 = 0.0895, G2 = 0.1247** (they appear in `QAA_Lee2002.ipynb`;
+    `bing.rt` uses internal `G1_STANDARD`/`G2_STANDARD` I couldn't fully resolve). Are these
+    the intended constants, or should they match `bing.rt`'s standards exactly?
+    >A.
+
+17. **Keep the B-spline path?** I made fixed coefficients the default but kept the
+    wavelength-dependent path available via `XQAAParams(coeff_source='bspline')` (so
+    `derive.py`, the `qssa_*.npz` files, and `load_qssa_bspline` all stay useful for when
+    you revisit λ-dependent G1/G2). Do you want that path kept as an option, or removed
+    entirely for now?
+    >A.
 
 ## Logging
 
@@ -353,3 +374,40 @@ What I learned / verified:
 
 Note: an editable install of xqaa was added to the `ocean14` env (`pip install -e . --no-deps`)
 so the demo notebook's kernel could import the package.
+
+### 2026-07-03 (Refactor prompt 4 — second pass on answers 8–15)
+
+The author answered 8–15 (having earlier let me proceed on defaults). Made a second pass to
+align with the actual answers. Used a Fable subagent for the isolated `papers/` rename while I
+did the core edits, and validated in `ocean14`.
+
+Changes relative to the prompt-3 pass:
+- **8 — fixed Gordon coefficients + Gordon naming.** The retrieval now uses **fixed Gordon
+  constants** by default, not the wavelength-dependent B-splines. Added `XQAAParams.coeff_source`
+  (`'fixed'` default | `'bspline'`) plus `G1=0.0895`, `G2=0.1247` (canonical Lee-2002/QAA
+  values). `inversion.calc_Gcoeff` branches on `coeff_source`; the B-spline path is preserved
+  for later. Renamed Hansen → Gordon (`fit_hansen` → `fit_gordon`; module docstring). `derive.py`
+  stays repaired (tooling for the B-spline path).
+- **9 — full bbnw → bbp rename.** Extended the rename through the `papers/` scripts' own locals,
+  params, dict keys, filenames, and plot labels (Fable subagent), preserving the external
+  `l23_ds.bbnw` ocpy attribute. All three papers scripts `py_compile` cleanly.
+- **10 — dict return.** `iops_from_Rrs` now returns a plain dict
+  `{'anw', 'bbp', 'corr_bbp', 'avg_bbp'}` (removed the `XQAARetrieval` dataclass).
+- **11 — reverted to X=1.** Default `L23_X` back to 1; noted in the field's metadata that X=4
+  will require modelling inelastic processes (to be surfaced in docs when written).
+- **13 — kept bing.** Added a `[project.optional-dependencies] papers = ["bing @ git+…"]`
+  extra (bing is a papers-only dep, not a package runtime dep); `requirements.txt` already
+  retained bing. CI already targets `xqaa`/`main`.
+- **14 — numerics.** `quadratic` still raises on negative `u` (unchanged).
+- **15 — archived notebooks.** Moved the five stale notebooks to `nb/archive/`
+  (`First_anw`, `First_bbnw`, `Priors_adg`, `Water_Scattering`, and `QAA/QAA_Lee2002.ipynb`);
+  `nb/XQAA_demo.ipynb` stays at `nb/` and was rebuilt for the dict API + X=1 defaults and re-executed.
+- Regenerated the test goldens for the new defaults (X=1, fixed Gordon coefficients): on the
+  test spectrum `anw[-1] ≈ 0.558`, `bbp[-1] ≈ 5.02e-4`, `avg_bbp ≈ 7.76e-4`.
+
+Verified: full suite passes in `ocean14` (10 passed); `pyproject.toml` parses with `test` and
+`papers` extras; no old names (`retrieve_bbnw`, `bbnw_corr`, `XQAARetrieval`, `fit_hansen`,
+`interp1d`, `IPython`, `xiop`) remain in the package.
+
+Added two follow-up questions to the Q&A (16: confirm the fixed G1/G2 values; 17: keep vs
+remove the B-spline coefficient path).

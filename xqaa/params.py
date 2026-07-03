@@ -72,6 +72,29 @@ class XQAAParams(myDataClass):
             "options": ["none", "mean", "pow"],
         },
     )
+    coeff_source: str = field(
+        default="fixed",
+        metadata={
+            "help": "Source of the QSSA G1/G2 coefficients: fixed Gordon "
+                    "constants ('fixed') or wavelength-dependent B-splines "
+                    "('bspline')",
+            "options": ["fixed", "bspline"],
+        },
+    )
+    G1: float = field(
+        default=0.0895,
+        metadata={
+            "help": "Fixed Gordon coefficient G1 (used when coeff_source='fixed')",
+            "Notation": "G_1",
+        },
+    )
+    G2: float = field(
+        default=0.1247,
+        metadata={
+            "help": "Fixed Gordon coefficient G2 (used when coeff_source='fixed')",
+            "Notation": "G_2",
+        },
+    )
     amin: float = field(
         default=400.0,
         metadata={
@@ -96,9 +119,10 @@ class XQAAParams(myDataClass):
         },
     )
     L23_X: int = field(
-        default=4,
+        default=1,
         metadata={
-            "help": "X index for Loisel23 dataset",
+            "help": "X index for Loisel23 dataset (X=4 will require modelling "
+                    "inelastic processes; use X=1 for now)",
             "Notation": "X",
         },
     )

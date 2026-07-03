@@ -51,7 +51,7 @@ def from_loisel23(params: xqaa_params.XQAAParams = None,
         dw (int): Stride for sub-sampling the wavelength grid.
 
     Returns:
-        None. Writes an ``.npz`` archive (see :func:`fit_hansen`).
+        None. Writes an ``.npz`` archive (see :func:`fit_gordon`).
     """
     if params is None:
         params = xqaa_params.XQAAParams()
@@ -68,11 +68,11 @@ def from_loisel23(params: xqaa_params.XQAAParams = None,
     bb = l23_ds.bb.data
 
     # Fit per-wavelength and save
-    fit_hansen(l23_wave[::dw], l23_Rrs[::dw], a[::dw], bb[::dw], outfile)
+    fit_gordon(l23_wave[::dw], l23_Rrs[::dw], a[::dw], bb[::dw], outfile)
     return
 
 
-def fit_hansen(wave: np.ndarray, Rrs: np.ndarray, a: np.ndarray,
+def fit_gordon(wave: np.ndarray, Rrs: np.ndarray, a: np.ndarray,
                bb: np.ndarray, outfile: str):
     """
     Fit the QSSA quadratic per wavelength and save the coefficients.

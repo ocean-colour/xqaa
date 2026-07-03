@@ -23,11 +23,12 @@ def test_iop_from_Rrs():
     # Load the reference Rrs spectrum
     df = pandas.read_csv(os.path.join(DATA_DIR, 'test_Rrs.csv'))
 
-    # Run the retrieval
+    # Run the retrieval (returns a dict)
     result = retrieve.iops_from_Rrs(
         df.wave.values, df.Rrs.values, xqaaParams)
 
-    # Golden values regenerated 2026-07-02 with the X=4 default (ocean14/ocpy)
-    assert np.isclose(result.anw[-1], 0.08494522800146487, atol=1e-5)
-    assert np.isclose(result.bbp[-1], 0.00046071271876868373, atol=1e-5)
-    assert np.isclose(result.avg_bbp, 0.0005777785114588882, atol=1e-8)
+    # Golden values regenerated 2026-07-03 with the defaults
+    # (X=1, fixed Gordon coefficients; ocean14/ocpy)
+    assert np.isclose(result['anw'][-1], 0.5583211662844612, atol=1e-5)
+    assert np.isclose(result['bbp'][-1], 0.0005018579339114141, atol=1e-5)
+    assert np.isclose(result['avg_bbp'], 0.0007757210050890063, atol=1e-8)
