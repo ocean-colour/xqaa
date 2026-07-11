@@ -19,7 +19,7 @@ def prepl23_for_sensitivity(extras:dict, idx:int):
     # Unpack
     l23_wave = l23_ds.Lambda.data
     l23_Rrs = l23_ds.Rrs.data
-    l23_bbnw = l23_ds.bbnw.data
+    l23_bbp = l23_ds.bbnw.data
 
     # Water
     aw = (l23_ds.a.data - l23_ds.anw.data)[0]
@@ -27,14 +27,14 @@ def prepl23_for_sensitivity(extras:dict, idx:int):
 
     # More
     Rrs_true = l23_Rrs[idx]
-    bbnw_true = l23_bbnw[idx]
+    bbp_true = l23_bbp[idx]
     rrs_true = xqaa_geom.rrs_from_Rrs(Rrs_true)
 
     # Rrs
     Rrs = rt.calc_Rrs(l23_ds.a.data[idx], 
                       l23_ds.bb.data[idx])
     rrs = xqaa_geom.rrs_from_Rrs(Rrs)
-    return l23_wave, rrs, aw, bbw, bbnw_true
+    return l23_wave, rrs, aw, bbw, bbp_true
 
 def sensitivity_to_G1(dataset:str='loisel23', 
                 extras = {'X':1, 'Y':0},
@@ -42,7 +42,7 @@ def sensitivity_to_G1(dataset:str='loisel23',
     outfile = f'{outroot}_{dataset}.png'
     dG1s = [-0.002, -0.001, 0., 0.001, 0.002]
  
-    l23_wave, rrs, aw, bbw, bbnw_true = prepl23_for_sensitivity(
+    l23_wave, rrs, aw, bbw, bbp_true = prepl23_for_sensitivity(
         extras, idx)
 
     # Do it
@@ -51,11 +51,11 @@ def sensitivity_to_G1(dataset:str='loisel23',
     for dG1 in dG1s:
         G1 = rt.G1 + dG1
         D = inversion.quadratic(rrs, G1, rt.G2)
-        bbnw = inversion.retrieve_bbnw(aw, bbw, D)
+        bbp = inversion.retrieve_bbp(aw, bbw, D)
 
         # Difference
-        diff = bbnw - bbnw_true
-        rdiff = diff / bbnw_true
+        diff = bbp - bbp_true
+        rdiff = diff / bbp_true
         all_diffs.append(diff)
         all_rdiffs.append(rdiff)
 
@@ -69,7 +69,7 @@ def sensitivity_to_G2(dataset:str='loisel23',
     outfile = f'{outroot}_{dataset}.png'
     dG2s = [0.80, 0.90, 1., 1.1, 1.2]
  
-    l23_wave, rrs, aw, bbw, bbnw_true = prepl23_for_sensitivity(
+    l23_wave, rrs, aw, bbw, bbp_true = prepl23_for_sensitivity(
         extras, idx)
 
     # Do it
@@ -78,11 +78,11 @@ def sensitivity_to_G2(dataset:str='loisel23',
     for dG2 in dG2s:
         G2 = rt.G2*dG2
         D = inversion.quadratic(rrs, rt.G1, G2)
-        bbnw = inversion.retrieve_bbnw(aw, bbw, D)
+        bbp = inversion.retrieve_bbp(aw, bbw, D)
 
         # Difference
-        diff = bbnw - bbnw_true
-        rdiff = diff / bbnw_true
+        diff = bbp - bbp_true
+        rdiff = diff / bbp_true
         all_diffs.append(diff)
         all_rdiffs.append(rdiff)
 
@@ -102,7 +102,7 @@ def fig_sens(wave:np.ndarray, all_rdiffs:list,
         
     #
     ax.set_xlabel('Wavelength (nm)')
-    ax.set_ylabel(r'$\delta b_{b,nw}/b_{b,nw}$'+'  [%]')
+    ax.set_ylabel(r'$\delta b_{b,p}/b_{b,p}$'+'  [%]')
     # 
     ax.axhline(0.0, color='k', linestyle='--')
     ax.grid()

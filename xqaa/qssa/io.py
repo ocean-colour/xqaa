@@ -70,9 +70,9 @@ def load_qssa_bspline(params:xqaa_params.XQAAParams):
     # Load
     d = np.load(bspline_file)
 
-    # Generate the BSplines
-    bspline_p1 = BSpline(d['t_H1'], d['c_H1'], d['k_H1'])
-    bspline_p2 = BSpline(d['t_H2'], d['c_H2'], d['k_H2'])
+    # Generate the BSplines for the G1 and G2 coefficients
+    bspline_p1 = BSpline(d['t_G1'], d['c_G1'], d['k_G1'])
+    bspline_p2 = BSpline(d['t_G2'], d['c_G2'], d['k_G2'])
 
     # Return
     return bspline_p1, bspline_p2

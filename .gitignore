@@ -9,6 +9,9 @@ __pycache__/
 # Figures
 *.png
 
+# PDFs
+*.pdf
+
 # Data files
 *.npz
 

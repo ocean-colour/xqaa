@@ -1,49 +1,34 @@
-""" Tests for retrieve module. """
+""" Tests for the retrieve module. """
+import os
+
 import numpy as np
 import pandas
+
+import pytest
+
+# The end-to-end retrieval needs ocpy (aw + Loisel23 bbw); skip if absent.
+pytest.importorskip("ocpy")
 
 from xqaa import params as xqaa_params
 from xqaa import retrieve
 
-from scipy.interpolate import BSpline
+# Resolve the test data relative to this file (not the cwd)
+DATA_DIR = os.path.join(os.path.dirname(__file__), 'files')
 
-import pytest
 
 def test_iop_from_Rrs():
-    """ Test the load_params function.
-    """
+    """ End-to-end check of iops_from_Rrs against golden values. """
     xqaaParams = xqaa_params.XQAAParams()
 
-    # Create some dummy data
-    df = pandas.read_csv('files/test_Rrs.csv')
+    # Load the reference Rrs spectrum
+    df = pandas.read_csv(os.path.join(DATA_DIR, 'test_Rrs.csv'))
 
-    # Call the function
-    anw, bbnw, avg_bbnw = retrieve.iops_from_Rrs(
+    # Run the retrieval (returns a dict)
+    result = retrieve.iops_from_Rrs(
         df.wave.values, df.Rrs.values, xqaaParams)
 
-    # Check the values
-    #pytest.set_trace()
-    assert np.isclose(anw[-1], 0.361059, atol=1e-5)
-    assert np.isclose(bbnw[-1], 0.000549, atol=1e-5)
-    assert np.isclose(avg_bbnw, 0.0007784291720040593)
-
-'''
-from ocpy.hydrolight import loisel23
-import pandas
-
-# Load 
-l23_ds = loisel23.load_ds(4,0)
-
-# Unpack
-l23_wave = l23_ds.Lambda.data
-l23_Rrs = l23_ds.Rrs.data
-
-# Grab one
-Rrs = l23_Rrs[0]
-
-# Write
-df = pandas.DataFrame({'wave':l23_wave, 'Rrs':Rrs})
-df.to_csv('files/test_Rrs.csv', index=False)
-print('Wrote files/test_Rrs.csv')
-'''
-
+    # Golden values regenerated 2026-07-03 with the defaults
+    # (X=1, fixed Gordon coefficients; ocean14/ocpy)
+    assert np.isclose(result['anw'][-1], 0.5583211662844612, atol=1e-5)
+    assert np.isclose(result['bbp'][-1], 0.0005018579339114141, atol=1e-5)
+    assert np.isclose(result['avg_bbp'], 0.0007757210050890063, atol=1e-8)

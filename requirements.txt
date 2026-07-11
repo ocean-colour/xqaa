@@ -1,0 +1,12 @@
+numpy
+scipy
+pandas
+matplotlib
+seaborn
+tqdm
+IPython
+pytest
+# Sibling packages (not on PyPI) — installed from GitHub
+# ocpy is a runtime dependency; bing is only needed by papers/ scripts
+git+https://github.com/ocean-colour/ocpy
+git+https://github.com/ocean-colour/bing.git

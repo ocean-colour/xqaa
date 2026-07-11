@@ -1,0 +1,16 @@
+# Documentation build requirements for Read the Docs.
+# Install with: pip install -r docs/requirements.txt
+#
+# XQAA itself is NOT pip-installed on the RTD runner (its `ocpy` dependency
+# is git-only and is mocked in conf.py via autodoc_mock_imports). Instead,
+# conf.py inserts the repository root into sys.path so autodoc imports the
+# package straight from source -- which is why the scientific stack (numpy,
+# scipy, pandas, matplotlib) must be listed here explicitly.
+
+sphinx>=7.0
+sphinx-rtd-theme>=2.0
+myst-nb                  # render the demo notebook
+numpy
+scipy
+pandas
+matplotlib

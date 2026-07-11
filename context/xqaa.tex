@@ -1,0 +1,224 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{hyperref}
+
+\newcommand{\rrs}{\ensuremath{r_{\rm rs}}}
+\newcommand{\Rrs}{\ensuremath{R_{\rm rs}}}
+\newcommand{\Kd}{\ensuremath{K_{\rm d}}}
+
+
+% IOPs
+\newcommand{\nabs}{\ensuremath{a}} % absorption
+\newcommand{\abs}{\ensuremath{a(\lambda)}} % absorption
+\newcommand{\scat}{\ensuremath{b(\lambda)}} % back-scattering
+\newcommand{\nbb}{\ensuremath{b_b}} % back-scattering
+\newcommand{\bb}{\ensuremath{b_b(\lambda)}} % back-scattering
+\newcommand{\bbw}{\ensuremath{b_{b,w}(\lambda)}} % back-scattering
+\newcommand{\nbbw}{\ensuremath{b_{b,w}}} % back-scattering
+\newcommand{\bbnw}{\ensuremath{b_{b,nw}(\lambda)}} % back-scattering
+\newcommand{\nbbnw}{\ensuremath{b_{b,nw}}} % back-scattering
+\newcommand{\aw}{\ensuremath{a_{\rm w} (\lambda)}}
+\newcommand{\naw}{\ensuremath{a_{\rm w}}}
+\newcommand{\anw}{\ensuremath{a_{\rm nw} (\lambda)}}
+\newcommand{\nanw}{\ensuremath{a_{\rm nw}}}
+\newcommand{\acdom}{\ensuremath{a_{\rm CDOM}}}
+\newcommand{\aph}{\ensuremath{a_{\rm ph}(\lambda)}}
+\newcommand{\naph}{\ensuremath{a_{\rm ph}}}
+\newcommand{\adg}{\ensuremath{a_{\rm dg} (\lambda)}}
+\newcommand{\nadg}{\ensuremath{a_{\rm dg}}}
+\newcommand{\ag}{\ensuremath{a_{\rm g} (\lambda)}}
+\newcommand{\ad}{\ensuremath{a_{\rm d} (\lambda)}}
+\newcommand{\nad}{\ensuremath{a_{\rm d}}}
+\newcommand{\nag}{\ensuremath{a_{\rm g}}}
+\newcommand{\ax}{\ensuremath{a_{\rm x}}}
+\newcommand{\chl}{\ensuremath{Chl}}
+\newcommand{\chla}{\ensuremath{Chla}}
+
+\newcommand{\ffaph}{\ensuremath{\naph(440)}} % aph_L23 at 440
+\newcommand{\knwnaph}{\ensuremath{\naph^{\rm L23}(440)}} % aph_L23 at 440
+
+% XIOP
+\newcommand{\dl}{\ensuremath{D(\lambda)}}
+\newcommand{\avgbbnw}{\ensuremath{<\bbnw>}}
+\newcommand{\name}{XQAA}
+\newcommand{\claude}{Claude}
+
+% Bricaud
+
+\title{\name\ -- To be renamed}
+\author{J. Xavier Prochaska}
+\date{July 2024}
+
+\begin{document}
+
+\maketitle
+
+\section{A Simple Derivation}
+
+\subsection{QAA}
+
+As James Hansen first derived decades ago
+(1971) and then adopted by Gordon (1973), 
+the subsurface remote
+sensing reflectance can be approximated
+by the quasi single scattering approximation (QSSA):
+
+\begin{equation}
+\rrs(\lambda) = G_1 u(\lambda) + G_2 u(\lambda)^2
+\label{eqn:hansen}
+\end{equation}
+with 
+
+\begin{equation}
+u(\lambda) \equiv \frac{b_b(\lambda)}{a(\lambda) + b_b(\lambda)}
+\label{eqn:def_u}
+\end{equation}
+
+\begin{figure}[ht!]
+\centering\includegraphics[width=\textwidth]{fig_rrs_u.png}
+\caption{
+A demonstration that the QSSA is a good descrption
+of the full radiative transfer (here the Hydrolight
+calculations of Loisel et al. 2023).
+}
+\label{fig:rrs_u}
+\end{figure}
+
+This quantity is shown in Figure~\ref{fig:rrs_u}
+for a few wavelengths using the outputs from
+Loisel+2023 (hereafter L23).  The community,
+following Gordon, has generally assumed that
+the coefficients in 
+Equation~\ref{eqn:hansen} holds independent
+of wavelength.  Figure~\ref{fig:rrs_u} shows
+this is not strictly the case, but we shall
+also make this assumption for now.  
+The formalism that follows can easily accommodate
+$G_1, G_2$ as functions of wavelength.
+
+Now, we also can relate the subsurface remote
+sensing reflectance to the standard remote
+surface reflectance as:
+
+\begin{equation}
+    \rrs(\lambda) = \frac{\Rrs(\lambda)}{0.52 + 1.17\Rrs(\lambda)}
+\label{eqn:Rrs}
+\end{equation}
+Clearly, if \rrs\ is held constant, then so too is \Rrs.
+
+\subsection{The Quadratic Equation}
+
+We recognize equation~\ref{eqn:hansen} as the standard,
+quadratic equation 
+
+\begin{equation}
+    a x^2 + b x + c = 0
+\end{equation}
+which has solutions:
+
+\begin{equation}
+    x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\end{equation}
+Applying this to our equation and taking the positive
+root we have:
+
+
+\begin{equation}
+    u = \frac{-G_1 + \sqrt{G_1^2 + 4G_2 \rrs}}{2 G_2}
+    \label{eqn:u}
+\end{equation}
+where $u, \rrs, G_1, G_2$ can all be functions of 
+$\lambda$.
+
+Let us define the term on the right-hand side of
+Equation~\ref{eqn:u} as a number $C$.
+Then, with our definition of $u$ (Equation~\ref{eqn:def_u})
+we can re-arrange with a bit of algebra to recover:
+
+\begin{equation}
+    \frac{\abs}{\bb} = \frac{1}{C(\lambda)} - 1
+    \label{eqn:a_bb}
+\end{equation}
+Now, let the right-hand side of Equation~\ref{eqn:a_bb}
+be another number $D(\lambda) = \equiv 1/C(\lambda) - 1$ and we recover
+our \name\ approximation:
+
+\begin{equation}
+    \frac{\aw + \anw}{\bbw  + \bbnw} = \dl
+    \label{eqn:xiop}
+\end{equation}
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Red Wavelengths}
+
+At long wavelengths, $\lambda > 600$\,nm, water 
+absorption dominates, i.e.\ $\aw \gg \anw$.  
+% chl=10; water = 4x phytoplankton
+In this
+limit, we can solve for the non-water backscattering
+coefficients by re-arranging Equation~\ref{eqn:xiop}:
+
+\begin{equation}
+    \bbnw \approx \frac{\aw}{\dl} - \bbw
+    \label{eqn:bbnw}
+\end{equation}
+To the extent that we know \bbw\ accurately at these
+wavelengths (we do), we have a direct estimate of \bbnw.
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Blue Wavelengths}
+
+In most oligotrophic ocean waters ($\chla < 1$), 
+  % Equal at \chla=1
+  % non-water dominates when \chla=10
+backscattering at blue wavelengths
+is dominated by pure water: $\bbw \gg \bbnw$.
+This allows us to estimate the non-water absorption
+coefficients:
+
+\begin{equation}
+    \anw \approx \dl \bbw - \aw
+    \label{eqn:anw}
+\end{equation}
+
+In practice, we find that \bbnw's contribution
+is non-negligible.  As such, we may include an estimate of its value from equation~\ref{eqn:bbnw}:
+
+\begin{equation}
+    \anw \approx \dl \left [ \bbw + \avgbbnw \right ] - \aw
+    \label{eqn:anw_bbnw}
+\end{equation}
+where \avgbbnw\ is the average 
+of \bbnw\ from 600-650\,nm.
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Error Propagation}
+
+Error propagation for \name\ is straightforward and simply follows
+standard practice, e.g.
+
+\begin{equation}
+    \sigma^2(a) = \left | \frac{\partial a}{\partial \rrs} \right |^2 \sigma^2(\rrs)
+\end{equation}
+
+The algebra, however, is a bit hairy..
+
+\subsection{Error in \bbnw}
+
+I have found empirically that \bbnw\ is sensitive to error in $G_1$.
+Let's explore why.
+
+
+\begin{equation}
+    \sigma^2(\bbnw) = \left | \frac{\partial \bbnw}{\partial G_1} \right |^2 \sigma^2(G_1)
+\end{equation}
+
+Thanks to \claude, we have:
+
+\begin{equation}
+    \sigma^2(\bbnw) = \left [ \frac{\aw  + \anw} {(1 - u(\lambda))^2} \right ] 
+      * \left [ \frac{-1 + \frac{G_1}{\sqrt{G_1^2 + 4G_2 \rrs}}}{2G_2} \right ]^2 \,  \sigma^2(G_1)
+\end{equation}
+
+\end{document}
